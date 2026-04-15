@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../../lib/prisma";
 
-dotenv.config();
+dotenv.config(); // for access .env
 const jwt_secret = process.env.JWT_SECRET as string;
 
 export const authenticateUser = async (
