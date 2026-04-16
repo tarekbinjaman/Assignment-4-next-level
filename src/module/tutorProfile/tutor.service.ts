@@ -12,7 +12,7 @@ export const createTutorProfile = async (userId: string, payload: any) => {
 
   // check if this user has already tutor account
   const existing = await prisma.tutorProfile.findUnique({
-    where: { id: userId },
+    where: { userId },
   });
 
   if (existing) {
@@ -29,7 +29,9 @@ export const createTutorProfile = async (userId: string, payload: any) => {
       },
     },
     include: {
-      user: true,
+      user: {
+        select: { id: true, name: true, email: true },
+      },
       categories: true,
     },
   });
@@ -39,7 +41,9 @@ export const createTutorProfile = async (userId: string, payload: any) => {
 export const getAllTutors = async () => {
   return await prisma.tutorProfile.findMany({
     include: {
-      user: true,
+      user: {
+        select: { id: true, name: true, email: true },
+      },
       categories: true,
       availability: true,
     },
@@ -50,7 +54,9 @@ export const getSingleTutor = async (id: string) => {
   return await prisma.tutorProfile.findUnique({
     where: { id },
     include: {
-      user: true,
+      user: {
+        select: { id: true, name: true, email: true },
+      },
       categories: true,
       availability: true,
     },
