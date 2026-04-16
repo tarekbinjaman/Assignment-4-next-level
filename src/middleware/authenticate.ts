@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { NextFunction, Request, Response } from "express";
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../lib/prisma";
 
 dotenv.config(); // for access .env
 const jwt_secret = process.env.JWT_SECRET as string;
