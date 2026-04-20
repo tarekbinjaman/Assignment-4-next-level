@@ -6,7 +6,7 @@ import { authenticateUser } from '../../middleware/authenticate';
 const router = express.Router();
 
 router.post("/", authenticateUser, BookingController.createBooking);
-router.post("/", authenticateUser, BookingController.getMyBooking);
+router.get("/", authenticateUser, BookingController.getMyBooking);
 
 
 export default router;
