@@ -19,7 +19,7 @@ export const createBooking = async (req: Request, res: Response) => {
   }
 };
 
-export const getBooking = async (req: Request, res: Response) => {
+export const getMyBooking = async (req: Request, res: Response) => {
   const userId = (req as any).user.id;
 
   const result = await BookingService.getMybookings(userId);
