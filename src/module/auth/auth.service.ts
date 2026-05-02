@@ -31,3 +31,4 @@ export const loginUser = async (email: string, passwrod: string) => {
     token,
   };
 };
+

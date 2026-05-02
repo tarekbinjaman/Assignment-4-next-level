@@ -1,4 +1,6 @@
 import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 import userRoutes from "./module/user/user.route";
 import loginRoute from "./module/auth/auth.route";
 import tutorRoutes from "./module/tutorProfile/tutor.route";
@@ -10,6 +12,13 @@ import reviewRoute from "./module/review/review.route";
 const app = express();
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  }),
+);
+app.use(cookieParser());
 
 app.use("/api/user", userRoutes);
 app.use("/api/auth", loginRoute);

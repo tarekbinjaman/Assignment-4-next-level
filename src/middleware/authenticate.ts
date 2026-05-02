@@ -12,22 +12,13 @@ export const authenticateUser = async (
   next: NextFunction,
 ) => {
   try {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader) {
-      return res.status(401).json({
-        success: false,
-        message: "No token provided",
-      });
-    }
-
-    // formating bearer token it cames like "Bearer kdflsaf45435fdsfasr3454fasldk" so we remove Bearer and use res of the toke
-    const token = authHeader.split(" ")[1];
+   
+    const token = req.cookies.accessToken
 
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: "Invalid token format",
+        message: "Unauthorized",
       });
     }
 
