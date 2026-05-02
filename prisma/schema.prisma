@@ -24,6 +24,7 @@ model User {
   email    String @unique
   password String
   role     Role
+  image String? // profile picture url optional
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   tutorProfile TutorProfile?
