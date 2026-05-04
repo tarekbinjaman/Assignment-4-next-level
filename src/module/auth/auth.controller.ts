@@ -11,6 +11,7 @@ export const login = async (req: Request, res: Response) => {
       httpOnly: true, // httpOnly: true means this token will access only server not browser. cause if i not use httpOnly: true hacker could access my token in browser console like this "document.cookie"
       secure: false, // true in production. Currently (false) means now it will work also in only http. If true then it will work only https
       sameSite: "lax", // using "lax" in cross site means different website it will allow to get method but not post/put/delete. so in main website nothing will change.
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({
