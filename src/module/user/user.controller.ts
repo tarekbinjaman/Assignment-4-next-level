@@ -64,8 +64,8 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 export const getMe = async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user?.userId;
-    console.log(userId)
+    const userId = (req as any).user?.id;
+    console.log("This is from getme route", userId)
     if(!userId) {
       return res.status(400).json({success: false, message: "User Id not found in token."});
     }

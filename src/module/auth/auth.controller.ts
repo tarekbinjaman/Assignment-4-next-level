@@ -12,6 +12,7 @@ export const login = async (req: Request, res: Response) => {
       secure: false, // true in production. Currently (false) means now it will work also in only http. If true then it will work only https
       sameSite: "lax", // using "lax" in cross site means different website it will allow to get method but not post/put/delete. so in main website nothing will change.
       maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: '/',
     });
 
     res.status(200).json({
