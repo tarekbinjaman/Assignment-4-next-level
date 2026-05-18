@@ -24,3 +24,14 @@ export const delteUser = async (id: string) => {
     where: { id },
   });
 };
+
+export const updateUser = async (id: string, payload: any) => {
+ const result = await prisma.user.update({
+  where: {id},
+  data: {
+    name: payload.name,
+    image: payload.image,
+  },
+ });
+ return result;
+}
