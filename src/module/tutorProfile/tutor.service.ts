@@ -65,11 +65,44 @@ export const getSingleTutor = async (id: string) => {
 };
 
 export const updateTutorProfile = async (id: string, payload: any) => {
+
+  // check tutor exists 
+  const existing = await prisma.tutorProfile.findUnique({
+    where: {id}
+  });
+
+  if(!existing) {
+    throw new Error("Tutor profile not found");
+  }
+
+
   return await prisma.tutorProfile.update({
     where: { id },
     data: {
       bio: payload.bio,
       hourlyRate: payload.hourlyRate,
+
+      categories: {
+        // remove previous categories
+        set: [],
+
+        // add new categories
+        connect: payload.categoryIds?.map((id: string) => ({
+          id,
+        })),
+      },
+
+    },
+    include: {
+      categories: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+        },
+      },
     },
   });
 };
