@@ -94,3 +94,23 @@ export const getMe = async (req: Request, res: Response) => {
     })
   }
 }
+
+export const updateUser = async (req: Request, res: Response) => {
+  try {
+    const result = await UserService.updateUser(
+      req.params.id as string,
+      req.body
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "User updated successfylly",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

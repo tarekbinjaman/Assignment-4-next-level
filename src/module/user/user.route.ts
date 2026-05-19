@@ -9,5 +9,6 @@ router.get("/", UserController.getAllUser);
 router.get("/me", authenticateUser, UserController.getMe);
 router.get("/:id", UserController.getSingleUser);
 router.delete("/:id", UserController.deleteUser);
+router.patch("/:id", UserController.updateUser);
 
 export default router;
