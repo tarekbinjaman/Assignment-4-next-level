@@ -78,6 +78,14 @@ export const getMe = async (req: Request, res: Response) => {
         role: true,
         name: true,
         image: true,
+
+        tutorProfile: {
+          select: {
+            id: true,
+            bio: true,
+            hourlyRate: true,
+          }
+        }
       }
     });
 
