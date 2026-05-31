@@ -110,6 +110,8 @@ export const updateUser = async (req: Request, res: Response) => {
       req.body
     );
 
+    console.log("THis is from user.controller.updateUser request", req)
+
     res.status(200).json({
       success: true,
       message: "User updated successfylly",

@@ -8,5 +8,6 @@ router.post("/", authenticateUser, TutorController.createTutor);
 router.get("/", TutorController.getTutors);
 router.get("/:id", TutorController.getTutor);
 router.patch("/:id", authenticateUser, TutorController.updateTutor);
+router.delete("/:id", authenticateUser, TutorController.deleteTutor);
 
 export default router;

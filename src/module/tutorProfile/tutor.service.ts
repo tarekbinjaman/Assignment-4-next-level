@@ -106,3 +106,17 @@ export const updateTutorProfile = async (id: string, payload: any) => {
     },
   });
 };
+
+export const deleteTutorProfile = async (id: string) => {
+  const tutor = await prisma.tutorProfile.findUnique({
+    where: { id },
+  });
+
+  if (!tutor) {
+    throw new Error("Tutor profile not found");
+  }
+
+  return await prisma.tutorProfile.delete({
+    where: { id },
+  });
+};

@@ -47,3 +47,22 @@ export const updateTutor = async (req: Request, res: Response) => {
     data: result,
   });
 };
+
+export const deleteTutor = async (req: Request, res: Response) => {
+  try {
+    const result = await TutorService.deleteTutorProfile(
+      req.params.id as string
+    );
+
+    res.json({
+      success: true,
+      message: "Tutor profile deleted successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
