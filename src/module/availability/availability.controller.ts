@@ -55,3 +55,25 @@ export const updateAvailability = async (req: Request, res: Response) => {
     });
   }
 }
+
+export const deleteAvailability = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.id;
+
+    const result = await AvailabilityService.deleteAvailability(
+      userId,
+      req.params.id as string,
+    )
+
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    })
+  }
+}
