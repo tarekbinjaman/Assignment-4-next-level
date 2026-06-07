@@ -93,3 +93,4 @@ export const deleteAvailability = async (userId: string, availabilityId: string)
         },
     });
 };
+

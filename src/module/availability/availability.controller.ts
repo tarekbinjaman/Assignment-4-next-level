@@ -23,14 +23,23 @@ export const createAvailAbility = async (req: Request, res: Response) => {
 };
 
 export const getMyAvailability = async (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
 
-  const result = await AvailabilityService.getMyAvailability(userId);
+  try {
 
-  res.json({
-    success: true,
-    data: result,
-  });
+    const userId = (req as any).user.id;
+  
+    const result = await AvailabilityService.getMyAvailability(userId);
+  
+    res.json({
+      success: true,
+      data: result,
+    });
+  } catch(error: any) {
+    res.status(400).json({
+      success: false,
+      message: error.message
+    })
+  }
 };
 
 export const updateAvailability = async (req: Request, res: Response) => {
