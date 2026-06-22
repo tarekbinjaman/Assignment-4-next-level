@@ -43,7 +43,7 @@ export const getAllTutors = async () => {
   return await prisma.tutorProfile.findMany({
     include: {
       user: {
-        select: { id: true, name: true, email: true },
+        select: { id: true, name: true, email: true, image: true, },
       },
       categories: true,
       availability: true,
