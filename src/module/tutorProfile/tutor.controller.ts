@@ -20,7 +20,12 @@ export const createTutor = async (req: Request, res: Response) => {
 };
 
 export const getTutors = async (req: Request, res: Response) => {
-  const result = await TutorService.getAllTutors();
+  const {category, sort, search} = req.query;
+  const result = await TutorService.getAllTutors({
+    category: category as string,
+    sort: sort as string,
+    search: search as string,
+  });
   res.json({
     success: true,
     data: result,

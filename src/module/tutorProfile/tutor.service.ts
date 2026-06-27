@@ -1,7 +1,6 @@
 import { error } from "node:console";
 import { prisma } from "../../lib/prisma";
 
-
 export const createTutorProfile = async (userId: string, payload: any) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -39,11 +38,49 @@ export const createTutorProfile = async (userId: string, payload: any) => {
   return result;
 };
 
-export const getAllTutors = async () => {
+export const getAllTutors = async ({
+  category,
+  sort,
+  search,
+}: {
+  category?: string;
+  sort?: string;
+  search?: string;
+}) => {
   return await prisma.tutorProfile.findMany({
+    where: {
+      ...(search && {
+        user: {
+          name: {
+            contains: search,
+            mode: "insensitive"
+          }
+        }
+      }),
+      ...(category && {
+        categories: {
+          some: {
+            name: category,
+          },
+        },
+      }),
+    },
+
+    ...(sort === "price_asc" && {
+      orderBy: {
+        hourlyRate: "asc",
+      },
+    }),
+
+    ...(sort === "price_desc" && {
+      orderBy: {
+        hourlyRate: "desc"
+      }
+    }),
+
     include: {
       user: {
-        select: { id: true, name: true, email: true, image: true, },
+        select: { id: true, name: true, email: true, image: true },
       },
       categories: true,
       availability: true,
@@ -65,16 +102,14 @@ export const getSingleTutor = async (id: string) => {
 };
 
 export const updateTutorProfile = async (id: string, payload: any) => {
-
-  // check tutor exists 
+  // check tutor exists
   const existing = await prisma.tutorProfile.findUnique({
-    where: {id}
+    where: { id },
   });
 
-  if(!existing) {
+  if (!existing) {
     throw new Error("Tutor profile not found");
   }
-
 
   return await prisma.tutorProfile.update({
     where: { id },
@@ -91,7 +126,6 @@ export const updateTutorProfile = async (id: string, payload: any) => {
           id,
         })),
       },
-
     },
     include: {
       categories: true,
