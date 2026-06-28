@@ -1,5 +1,6 @@
 import { error } from "node:console";
 import { prisma } from "../../lib/prisma";
+import { Day } from "../../../generated/prisma/enums";
 
 export const createTutorProfile = async (userId: string, payload: any) => {
   const user = await prisma.user.findUnique({
@@ -42,10 +43,12 @@ export const getAllTutors = async ({
   category,
   sort,
   search,
+  availableDays
 }: {
   category?: string;
   sort?: string;
   search?: string;
+  availableDays?: Day[];
 }) => {
   return await prisma.tutorProfile.findMany({
     where: {
@@ -54,6 +57,15 @@ export const getAllTutors = async ({
           name: {
             contains: search,
             mode: "insensitive"
+          }
+        }
+      }),
+      ...(availableDays?.length && {
+        availability: {
+          some: {
+            day: {
+              in: availableDays,
+            }
           }
         }
       }),

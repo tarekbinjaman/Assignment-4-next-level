@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as TutorService from "./tutor.service";
+import { Day } from "../../../generated/prisma/enums";
 
 export const createTutor = async (req: Request, res: Response) => {
   try {
@@ -20,11 +21,14 @@ export const createTutor = async (req: Request, res: Response) => {
 };
 
 export const getTutors = async (req: Request, res: Response) => {
-  const {category, sort, search} = req.query;
+  const { category, sort, search, availableDays } = req.query;
   const result = await TutorService.getAllTutors({
     category: category as string,
     sort: sort as string,
     search: search as string,
+    availableDays: availableDays
+      ? ((availableDays as string).split(",") as Day[])
+      : [],
   });
   res.json({
     success: true,
@@ -56,7 +60,7 @@ export const updateTutor = async (req: Request, res: Response) => {
 export const deleteTutor = async (req: Request, res: Response) => {
   try {
     const result = await TutorService.deleteTutorProfile(
-      req.params.id as string
+      req.params.id as string,
     );
 
     res.json({
