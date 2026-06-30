@@ -37,6 +37,7 @@ model TutorProfile {
   userId         String         @unique
   bio            String?
   hourlyRate     Decimal        @db.Decimal(10, 2)
+  experience     Int? 
   user           User           @relation(fields: [userId], references: [id])
   availability  Availability[]
   categories     Category[] @relation("TutorCategories")

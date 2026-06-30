@@ -24,6 +24,7 @@ export const createTutorProfile = async (userId: string, payload: any) => {
     data: {
       userId,
       bio: payload.bio,
+      experience: payload.experience,
       hourlyRate: payload.hourlyRate,
       categories: {
         connect: payload.categoryIds?.map((id: string) => ({ id })),
@@ -105,7 +106,7 @@ export const getSingleTutor = async (id: string) => {
     where: { id },
     include: {
       user: {
-        select: { id: true, name: true, email: true },
+        select: { id: true, name: true, email: true, image: true },
       },
       categories: true,
       availability: true,
@@ -127,6 +128,7 @@ export const updateTutorProfile = async (id: string, payload: any) => {
     where: { id },
     data: {
       bio: payload.bio,
+      experience: payload.experience,
       hourlyRate: payload.hourlyRate,
 
       categories: {
