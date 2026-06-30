@@ -25,6 +25,7 @@ export const createTutorProfile = async (userId: string, payload: any) => {
       userId,
       bio: payload.bio,
       experience: payload.experience,
+      education: payload.education,
       hourlyRate: payload.hourlyRate,
       categories: {
         connect: payload.categoryIds?.map((id: string) => ({ id })),
@@ -130,6 +131,7 @@ export const updateTutorProfile = async (id: string, payload: any) => {
       bio: payload.bio,
       experience: payload.experience,
       hourlyRate: payload.hourlyRate,
+      education: payload.education,
 
       categories: {
         // remove previous categories

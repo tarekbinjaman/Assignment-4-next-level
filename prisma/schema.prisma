@@ -36,6 +36,7 @@ model TutorProfile {
   id             String         @id @default(uuid())
   userId         String         @unique
   bio            String?
+  education     String?
   hourlyRate     Decimal        @db.Decimal(10, 2)
   experience     Int? 
   user           User           @relation(fields: [userId], references: [id])
