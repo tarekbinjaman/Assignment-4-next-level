@@ -6,10 +6,11 @@ export const createBooking = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;
 
-    const result = await BookingService.createBooking(userId, req.body);
+    const booking = await BookingService.createBooking(userId, req.body);
+
     res.status(201).json({
       success: true,
-      data: result,
+      data: booking,
     });
   } catch (error: any) {
     res.status(400).json({
