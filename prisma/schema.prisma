@@ -86,6 +86,7 @@ model Booking {
   studentId String
   tutorId   String
   date      DateTime
+  notes       String?
   status    BookingStatus @default(PENDING)
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt

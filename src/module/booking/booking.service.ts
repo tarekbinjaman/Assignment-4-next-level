@@ -1,6 +1,6 @@
 import { prisma } from "../../lib/prisma";
 
-export const createBooking = async (userId: string, payload: {tutorId: string; date: string;}) => {
+export const createBooking = async (userId: string, payload: {tutorId: string; date: string; notes?: string;}) => {
   const bookingDate = new Date(payload.date);
   /* after converting date like this i can use it whatever i want
 bookingDate.getFullYear()   // 2026
@@ -65,6 +65,7 @@ bookingDate.getHours()      // 10 (depends on timezone)
       studentId: userId,
       tutorId: payload.tutorId as string,
       date: bookingDate,
+      notes: payload.notes,
     },
     include: {
       tutor: {
