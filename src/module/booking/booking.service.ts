@@ -1,6 +1,15 @@
 import { prisma } from "../../lib/prisma";
 
-export const createBooking = async (userId: string, payload: {tutorId: string; date: string; notes?: string;}) => {
+export const createBooking = async (
+  userId: string,
+  payload: {
+    tutorId: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+    notes?: string;
+  },
+) => {
   const bookingDate = new Date(payload.date);
   /* after converting date like this i can use it whatever i want
 bookingDate.getFullYear()   // 2026
@@ -10,9 +19,7 @@ bookingDate.getHours()      // 10 (depends on timezone)
     
     */
 
-
-
-// check date
+  // check date
   if (bookingDate < new Date()) {
     throw new Error("Cannot book past time");
   }
@@ -24,7 +31,7 @@ bookingDate.getHours()      // 10 (depends on timezone)
     },
   });
 
-  if(!student) {
+  if (!student) {
     throw new Error("Student not found");
   }
 
@@ -35,35 +42,36 @@ bookingDate.getHours()      // 10 (depends on timezone)
     },
   });
 
-  if(!tutor) {
+  if (!tutor) {
     throw new Error("Tutor not found");
   }
 
   // prevent booking yourself
-  if(tutor.userId === userId) {
+  if (tutor.userId === userId) {
     throw new Error("You cannot book yourself.");
   }
-
 
   // check if slot already booked
   const existingBooking = await prisma.booking.findUnique({
     where: {
       tutorId_date: {
         tutorId: payload.tutorId,
-        date: bookingDate
-      }
-    }
-  })
+        date: bookingDate,
+      },
+    },
+  });
 
-  if(existingBooking) {
-    throw new Error("This slot has already been booked")
+  if (existingBooking) {
+    throw new Error("This slot has already been booked");
   }
 
-  // 
+  //
   return await prisma.booking.create({
     data: {
       studentId: userId,
       tutorId: payload.tutorId as string,
+      startTime: payload.startTime,
+      endTime: payload.endTime,
       date: bookingDate,
       notes: payload.notes,
     },
@@ -71,9 +79,9 @@ bookingDate.getHours()      // 10 (depends on timezone)
       tutor: {
         include: {
           user: true,
-        }
-      }
-    }
+        },
+      },
+    },
   });
 };
 

@@ -19,32 +19,32 @@ enum Role {
 }
 
 model User {
-  id       String @id @default(uuid())
-  name     String
-  email    String @unique
-  password String
-  role     Role
-  image String? // profile picture url optional
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id           String        @id @default(uuid())
+  name         String
+  email        String        @unique
+  password     String
+  role         Role
+  image        String? // profile picture url optional
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   tutorProfile TutorProfile?
   bookings     Booking[]
   reviews      Review[]
 }
 
 model TutorProfile {
-  id             String         @id @default(uuid())
-  userId         String         @unique
-  bio            String?
-  education     String?
-  hourlyRate     Decimal        @db.Decimal(10, 2)
-  experience     Int? 
-  user           User           @relation(fields: [userId], references: [id])
-  availability  Availability[]
-  categories     Category[] @relation("TutorCategories")
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  bookings       Booking[]
+  id           String         @id @default(uuid())
+  userId       String         @unique
+  bio          String?
+  education    String?
+  hourlyRate   Decimal        @db.Decimal(10, 2)
+  experience   Int?
+  user         User           @relation(fields: [userId], references: [id])
+  availability Availability[]
+  categories   Category[]     @relation("TutorCategories")
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  bookings     Booking[]
 }
 
 enum Day {
@@ -85,27 +85,30 @@ model Booking {
   id        String        @id @default(uuid())
   studentId String
   tutorId   String
+  startTime String
+  endTime   String
   date      DateTime
-  notes       String?
+  notes     String?
   status    BookingStatus @default(PENDING)
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  student User         @relation(fields: [studentId], references: [id])
-  tutor   TutorProfile @relation(fields: [tutorId], references: [id])
-  review  Review?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  student   User          @relation(fields: [studentId], references: [id])
+  tutor     TutorProfile  @relation(fields: [tutorId], references: [id])
+  review    Review?
+
   @@unique([tutorId, date])
 }
 
 model Review {
-  id        String  @id @default(uuid())
-  userId    String 
-  bookingId String  @unique
+  id        String   @id @default(uuid())
+  userId    String
+  bookingId String   @unique
   rating    Int
   comment   String?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  user    User    @relation(fields: [userId], references: [id])
-  booking Booking @relation(fields: [bookingId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  booking   Booking  @relation(fields: [bookingId], references: [id])
 
   @@index([userId])
 }
