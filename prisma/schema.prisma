@@ -96,7 +96,7 @@ model Booking {
   tutor     TutorProfile  @relation(fields: [tutorId], references: [id])
   review    Review?
 
-  @@unique([tutorId, date])
+  @@unique([tutorId, date, startTime])
 }
 
 model Review {

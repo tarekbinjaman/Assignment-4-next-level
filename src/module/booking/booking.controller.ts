@@ -30,3 +30,16 @@ export const getMyBooking = async (req: Request, res: Response) => {
     data: result,
   });
 };
+
+export const getAvailableSlots = async (req: Request, res: Response) => {
+  try {
+    const {tutorId, date} = req.query;
+    if()
+
+  } catch(error: any) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

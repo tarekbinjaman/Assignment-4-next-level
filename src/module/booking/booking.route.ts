@@ -7,6 +7,10 @@ const router = express.Router();
 
 router.post("/", authenticateUser, BookingController.createBooking);
 router.get("/me", authenticateUser, BookingController.getMyBooking);
-
+// router.get(
+//   "/available-slots",
+//   authenticate,
+//   bookingController.getAvailableSlots
+// );
 
 export default router;

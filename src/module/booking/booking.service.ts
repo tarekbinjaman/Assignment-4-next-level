@@ -1,3 +1,4 @@
+import { Day } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 
 export const createBooking = async (
@@ -101,3 +102,63 @@ export const getMybookings = async (userId: string) => {
     },
   });
 };
+
+export const getAvailableSlots = async (tutorId: string, date: string) => {
+  const bookingDate = new Date(date);
+  if(isNaN(bookingDate.getTime())) {
+    throw new Error("Invalid booking date");
+  }
+
+  // convert selected date to Day enum
+  const weekDay = bookingDate 
+  .toLocaleDateString("en-US", {weekday: "long"})
+  .toUpperCase() as Day;
+
+  // find tutor
+  const tutor = await prisma.tutorProfile.findUnique({
+    where: {
+      id: tutorId,
+    },
+  });
+
+  if(!tutor) {
+    throw new Error("Tutor not found");
+  }
+
+  // get tutor availability for the selected day
+  const availability = await prisma.availability.findMany({
+    where: {
+      tutorId,
+      day: weekDay
+    },
+    orderBy: {
+      startTime: "asc",
+    }
+  });
+
+  if(availability.length === 0) {
+    return [];
+  }
+
+  // get already booked time slots
+  const bookedSlots = await prisma.booking.findMany({
+    where: {
+      tutorId,
+      date: bookingDate,
+    },
+    select: {
+      startTime: true,
+      endTime: true,
+    }
+  });
+
+  // Remove booked slots
+  const availableSlots = availability.filter((slot) => {
+    return !bookedSlots.some((booking) => 
+      booking.startTime === slot.startTime && 
+      booking.endTime === slot.endTime
+    );
+  });
+
+  return availableSlots;
+}
