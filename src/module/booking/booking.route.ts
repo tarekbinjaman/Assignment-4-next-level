@@ -1,16 +1,11 @@
-import express from 'express';
-import * as BookingController from './booking.controller';
-import { authenticateUser } from '../../middleware/authenticate';
-
+import express from "express";
+import * as BookingController from "./booking.controller";
+import { authenticateUser } from "../../middleware/authenticate";
 
 const router = express.Router();
 
 router.post("/", authenticateUser, BookingController.createBooking);
 router.get("/me", authenticateUser, BookingController.getMyBooking);
-// router.get(
-//   "/available-slots",
-//   authenticate,
-//   bookingController.getAvailableSlots
-// );
+router.get("/available-slots",authenticateUser, BookingController.getAvailableSlots,);
 
 export default router;

@@ -34,7 +34,20 @@ export const getMyBooking = async (req: Request, res: Response) => {
 export const getAvailableSlots = async (req: Request, res: Response) => {
   try {
     const {tutorId, date} = req.query;
-    if()
+    if(!tutorId || !date) {
+      throw new Error("Tutor ID and date are required.");
+    }
+
+    const slots = await BookingService.getAvailableSlots(
+      tutorId as string,
+      date as string
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Available slots retrieved successfully.",
+      data: slots,
+    });
 
   } catch(error: any) {
     res.status(400).json({
