@@ -85,6 +85,8 @@ model Booking {
   id        String        @id @default(uuid())
   studentId String
   tutorId   String
+  duration    Int 
+  totalPrice  Decimal       @db.Decimal(10,2)
   startTime String
   endTime   String
   date      DateTime

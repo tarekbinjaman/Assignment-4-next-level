@@ -8,6 +8,7 @@ export const createBooking = async (
     date: string;
     startTime: string;
     endTime: string;
+    duration: number;
     notes?: string;
   },
 ) => {
@@ -47,17 +48,25 @@ bookingDate.getHours()      // 10 (depends on timezone)
     throw new Error("Tutor not found");
   }
 
+  const totalPrice = ((Number(tutor.hourlyRate) / 60) * payload.duration).toFixed(2);
+
   // prevent booking yourself
   if (tutor.userId === userId) {
     throw new Error("You cannot book yourself.");
   }
 
+  // checking date
+  if (bookingDate < new Date()) {
+  throw new Error("Cannot book past time");
+}
+
   // check if slot already booked
   const existingBooking = await prisma.booking.findUnique({
     where: {
-      tutorId_date: {
+      tutorId_date_startTime: {
         tutorId: payload.tutorId,
         date: bookingDate,
+        startTime: payload.startTime,
       },
     },
   });
@@ -74,7 +83,9 @@ bookingDate.getHours()      // 10 (depends on timezone)
       startTime: payload.startTime,
       endTime: payload.endTime,
       date: bookingDate,
-      notes: payload.notes,
+      totalPrice,
+      duration: payload.duration,
+      notes: payload.notes ?? null,
     },
     include: {
       tutor: {
@@ -105,14 +116,14 @@ export const getMybookings = async (userId: string) => {
 
 export const getAvailableSlots = async (tutorId: string, date: string) => {
   const bookingDate = new Date(date);
-  if(isNaN(bookingDate.getTime())) {
+  if (isNaN(bookingDate.getTime())) {
     throw new Error("Invalid booking date");
   }
 
   // convert selected date to Day enum
-  const weekDay = bookingDate 
-  .toLocaleDateString("en-US", {weekday: "long"})
-  .toUpperCase() as Day;
+  const weekDay = bookingDate
+    .toLocaleDateString("en-US", { weekday: "long" })
+    .toUpperCase() as Day;
 
   // find tutor
   const tutor = await prisma.tutorProfile.findUnique({
@@ -121,7 +132,7 @@ export const getAvailableSlots = async (tutorId: string, date: string) => {
     },
   });
 
-  if(!tutor) {
+  if (!tutor) {
     throw new Error("Tutor not found");
   }
 
@@ -129,14 +140,14 @@ export const getAvailableSlots = async (tutorId: string, date: string) => {
   const availability = await prisma.availability.findMany({
     where: {
       tutorId,
-      day: weekDay
+      day: weekDay,
     },
     orderBy: {
       startTime: "asc",
-    }
+    },
   });
 
-  if(availability.length === 0) {
+  if (availability.length === 0) {
     return [];
   }
 
@@ -149,16 +160,17 @@ export const getAvailableSlots = async (tutorId: string, date: string) => {
     select: {
       startTime: true,
       endTime: true,
-    }
+    },
   });
 
   // Remove booked slots
   const availableSlots = availability.filter((slot) => {
-    return !bookedSlots.some((booking) => 
-      booking.startTime === slot.startTime && 
-      booking.endTime === slot.endTime
+    return !bookedSlots.some(
+      (booking) =>
+        booking.startTime === slot.startTime &&
+        booking.endTime === slot.endTime,
     );
   });
 
   return availableSlots;
-}
+};
