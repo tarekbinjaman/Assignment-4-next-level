@@ -43,6 +43,8 @@ export const getAvailableSlots = async (req: Request, res: Response) => {
       date as string
     );
 
+    // console.log("tutor id and date from booking.controller.ts line number: 46", tutorId, date)
+    // console.log("tutor available slots from controller", slots)
     res.status(200).json({
       success: true,
       message: "Available slots retrieved successfully.",
