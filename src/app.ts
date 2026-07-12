@@ -8,6 +8,7 @@ import categoryRoutes from "./module/category/caategory.route";
 import availabilityRotes from "./module/availability/availability.route";
 import bookingRoute from "./module/booking/booking.route";
 import reviewRoute from "./module/review/review.route";
+import DashboardRoute from "./module/dashboard/dashboard.route";
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use("/api/category", categoryRoutes);
 app.use("/api/availability", availabilityRotes);
 app.use("/api/booking", bookingRoute);
 app.use("/api/reviews", reviewRoute);
+app.use("/api/dashboard", DashboardRoute);
 
 app.get("/", (req, res) => {
   res.send("Hello, World");
