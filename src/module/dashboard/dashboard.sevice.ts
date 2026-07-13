@@ -146,6 +146,125 @@ const getStudentDashboard = async (studentId: string) => {
   };
 };
 
+const getTutorDashboard = async (userId: string) => {
+  const today = new Date();
+  // =========================
+  // Get Tutor Profile
+  // =========================
+  const tutor = await prisma.tutorProfile.findUnique({
+    where: {
+      userId,
+    },
+  });
+
+  if (!tutor) {
+    throw new Error("Tutor profile not found");
+  }
+
+  const tutorId = tutor?.id;
+
+  // =========================
+  // Dashboard Stats
+  // =========================
+
+  const upcomingSessions = await prisma.booking.count({
+    where: {
+      tutorId,
+      status: BookingStatus.ACCEPTED,
+      date: {
+        gte: today,
+      },
+    },
+  });
+
+  const completedSession = await prisma.booking.count({
+    where: {
+      tutorId,
+      status: BookingStatus.COMPLETED,
+    },
+  });
+
+  const students = await prisma.booking.findMany({
+    where: {
+      tutorId, 
+      status: BookingStatus.COMPLETED, 
+    },
+    distinct: ["studentId"],
+    select: {
+      studentId: true,
+    },
+  });
+
+  const totalStudent = students.length;
+  
+  // Average Rating
+  const averageRatingResult = await prisma.review.aggregate({
+    where: {
+      booking: {
+        tutorId,
+      },
+    },
+    _avg: {
+      rating: true,
+    },
+  });
+
+  // =========================
+  // Next Session
+  // =========================
+
+  const nextSession = await prisma.booking.findFirst({
+    where: {
+      tutorId,
+      status: BookingStatus.ACCEPTED,
+      date: {
+        gte: today,
+      },
+    }, 
+    orderBy: {
+      date: "asc"
+    },
+    include: {
+      student: true,
+    },
+  });
+
+
+
+  // =========================
+  // Recent Reviews
+  // =========================
+
+  const recentReviews = await prisma.review.findMany({
+    where: {
+      booking: {
+        tutorId,
+      },
+    },
+    orderBy: {
+      createdAt: "desc"
+    },
+    take: 5,
+    include: {
+      user: true,
+      booking: {
+        include: {
+          tutor: {
+            include: {
+              categories: true,
+            },
+          },
+        },
+
+      },
+    },
+  });
+
+  return
+
+
+};
+
 export const DashboardService = {
   getStudentDashboard,
 };
