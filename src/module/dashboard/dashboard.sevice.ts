@@ -230,6 +230,28 @@ const getTutorDashboard = async (userId: string) => {
   });
 
   // =========================
+  // Recent Sessions
+  // =========================
+
+  const recentSessions = await prisma.booking.findMany({
+    where: {
+      tutorId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 5,
+    include: {
+      student: true,
+      tutor: {
+        include: {
+          categories: true,
+        },
+      },
+    },
+  });
+
+  // =========================
   // Recent Reviews
   // =========================
 
@@ -289,6 +311,20 @@ const getTutorDashboard = async (userId: string) => {
           ? review.booking.tutor.categories[0]?.name
           : "General",
       createdAt: review.createdAt,
+    })),
+
+    recentSessions: recentSessions.map((session) => ({
+      id: session.id,
+      studentName: session.student.name,
+      studentImage: session.student.image,
+      date: session.date,
+      startTime: session.startTime,
+      endTime: session.endTime,
+      status: session.status,
+      category:
+        session.tutor.categories.length > 0
+          ? session.tutor.categories[0]?.name
+          : "General",
     })),
   };
 };
