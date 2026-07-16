@@ -186,8 +186,8 @@ const getTutorDashboard = async (userId: string) => {
 
   const students = await prisma.booking.findMany({
     where: {
-      tutorId, 
-      status: BookingStatus.COMPLETED, 
+      tutorId,
+      status: BookingStatus.COMPLETED,
     },
     distinct: ["studentId"],
     select: {
@@ -196,7 +196,7 @@ const getTutorDashboard = async (userId: string) => {
   });
 
   const totalStudent = students.length;
-  
+
   // Average Rating
   const averageRatingResult = await prisma.review.aggregate({
     where: {
@@ -220,16 +220,14 @@ const getTutorDashboard = async (userId: string) => {
       date: {
         gte: today,
       },
-    }, 
+    },
     orderBy: {
-      date: "asc"
+      date: "asc",
     },
     include: {
       student: true,
     },
   });
-
-
 
   // =========================
   // Recent Reviews
@@ -242,7 +240,7 @@ const getTutorDashboard = async (userId: string) => {
       },
     },
     orderBy: {
-      createdAt: "desc"
+      createdAt: "desc",
     },
     take: 5,
     include: {
@@ -255,7 +253,6 @@ const getTutorDashboard = async (userId: string) => {
             },
           },
         },
-
       },
     },
   });
@@ -265,21 +262,21 @@ const getTutorDashboard = async (userId: string) => {
       upcomingSessions,
       completedSession,
       totalStudent,
-      averageRatingResult: Number(
-        averageRatingResult._avg.rating ?? 0
-      ).toFixed(1)
+      averageRatingResult: Number(averageRatingResult._avg.rating ?? 0).toFixed(
+        1,
+      ),
     },
-    nextSession: nextSession ? {
-      id: nextSession.id,
-      studentName: nextSession.student.name,
-      studentImage: nextSession.student.image,
-      date: nextSession.date,
-      startTime: nextSession.startTime,
-      endTime: nextSession.endTime,
-      status: nextSession.status,
-    }
-    :
-    null,
+    nextSession: nextSession
+      ? {
+          id: nextSession.id,
+          studentName: nextSession.student.name,
+          studentImage: nextSession.student.image,
+          date: nextSession.date,
+          startTime: nextSession.startTime,
+          endTime: nextSession.endTime,
+          status: nextSession.status,
+        }
+      : null,
 
     recentReviews: recentReviews.map((review) => ({
       id: review.id,
@@ -287,15 +284,13 @@ const getTutorDashboard = async (userId: string) => {
       studentImage: review.user.image,
       rating: review.rating,
       comment: review.comment,
-      category: 
-      review.booking.tutor.categories.length > 0
-      ? review.booking.tutor.categories[0]?.name
-      : "General",
+      category:
+        review.booking.tutor.categories.length > 0
+          ? review.booking.tutor.categories[0]?.name
+          : "General",
       createdAt: review.createdAt,
     })),
   };
-
-
 };
 
 export const DashboardService = {
