@@ -260,11 +260,45 @@ const getTutorDashboard = async (userId: string) => {
     },
   });
 
-  return
+  return {
+    stats: {
+      upcomingSessions,
+      completedSession,
+      totalStudent,
+      averageRatingResult: Number(
+        averageRatingResult._avg.rating ?? 0
+      ).toFixed(1)
+    },
+    nextSession: nextSession ? {
+      id: nextSession.id,
+      studentName: nextSession.student.name,
+      studentImage: nextSession.student.image,
+      date: nextSession.date,
+      startTime: nextSession.startTime,
+      endTime: nextSession.endTime,
+      status: nextSession.status,
+    }
+    :
+    null,
+
+    recentReviews: recentReviews.map((review) => ({
+      id: review.id,
+      studentName: review.user.name,
+      studentImage: review.user.image,
+      rating: review.rating,
+      comment: review.comment,
+      category: 
+      review.booking.tutor.categories.length > 0
+      ? review.booking.tutor.categories[0]?.name
+      : "General",
+      createdAt: review.createdAt,
+    })),
+  };
 
 
 };
 
 export const DashboardService = {
   getStudentDashboard,
+  getTutorDashboard,
 };
