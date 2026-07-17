@@ -1,6 +1,16 @@
 import { BookingStatus } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 
+const calculateDuration = (startTime: string, endTime: string) => {
+  const [startHour, startMinute] = startTime.split(":").map(Number);
+  const [endHour, endMinute] = endTime.split(":").map(Number);
+
+  const totalMinutes =
+    endHour * 60 + endMinute - (startHour * 60 + startMinute);
+
+  return `${totalMinutes} mins`;
+};
+
 const getStudentDashboard = async (studentId: string) => {
   const today = new Date();
   // =========================
@@ -146,7 +156,7 @@ const getStudentDashboard = async (studentId: string) => {
   };
 };
 
-const getTutorDashboard = async (userId: string) => {
+const getTutorDashboard = async (userId: string, search?:string, status?: BookingStatus, sort: "asc" | "desc" = "desc") => {
   const today = new Date();
   // =========================
   // Get Tutor Profile
@@ -162,6 +172,38 @@ const getTutorDashboard = async (userId: string) => {
   }
 
   const tutorId = tutor?.id;
+
+   // =========================
+  // Sessions
+  // =========================
+
+  const sessions = await prisma.booking.findMany({
+    where: {
+      tutorId,
+      ...(status &&{
+        status,
+      }),
+      ...(search &&{
+        student: {
+          name: {
+            contains: search,
+            mode: "insensitive",
+          }
+        }
+      })
+    },
+    orderBy: {
+      date: sort,
+    },
+    include: {
+      student: true,
+      tutor: {
+        include: {
+          categories: true,
+        },
+      },
+    },
+  });
 
   // =========================
   // Dashboard Stats
@@ -296,6 +338,10 @@ const getTutorDashboard = async (userId: string) => {
           date: nextSession.date,
           startTime: nextSession.startTime,
           endTime: nextSession.endTime,
+          duration: calculateDuration(
+            nextSession.startTime,
+            nextSession.endTime,
+          ),
           status: nextSession.status,
         }
       : null,
@@ -326,6 +372,21 @@ const getTutorDashboard = async (userId: string) => {
           ? session.tutor.categories[0]?.name
           : "General",
     })),
+
+    allSessions: sessions.map((session) => ({
+      id: session.id,
+      studentName: session.student.name,
+      studentImage: session.student.image,
+      date: session.date,
+      startTime: session.startTime,
+      endTime: session.endTime,
+      status: session.status,
+      category:
+        session.tutor.categories.length > 0
+          ? session.tutor.categories[0]?.name
+          : "General",
+    })),
+
   };
 };
 
