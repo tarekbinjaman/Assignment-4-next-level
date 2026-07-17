@@ -156,7 +156,12 @@ const getStudentDashboard = async (studentId: string) => {
   };
 };
 
-const getTutorDashboard = async (userId: string, search?:string, status?: BookingStatus, sort: "asc" | "desc" = "desc") => {
+const getTutorDashboard = async (
+  userId: string,
+  search?: string,
+  status?: BookingStatus,
+  sort: "asc" | "desc" = "desc",
+) => {
   const today = new Date();
   // =========================
   // Get Tutor Profile
@@ -173,24 +178,24 @@ const getTutorDashboard = async (userId: string, search?:string, status?: Bookin
 
   const tutorId = tutor?.id;
 
-   // =========================
+  // =========================
   // Sessions
   // =========================
 
   const sessions = await prisma.booking.findMany({
     where: {
       tutorId,
-      ...(status &&{
+      ...(status && {
         status,
       }),
-      ...(search &&{
+      ...(search && {
         student: {
           name: {
             contains: search,
             mode: "insensitive",
-          }
-        }
-      })
+          },
+        },
+      }),
     },
     orderBy: {
       date: sort,
@@ -386,11 +391,48 @@ const getTutorDashboard = async (userId: string, search?:string, status?: Bookin
           ? session.tutor.categories[0]?.name
           : "General",
     })),
-
   };
+};
+
+const updateTutorSessionStatus = async (
+  userId: string,
+  bookingId: string,
+  status: BookingStatus,
+) => {
+  const tutor = await prisma.tutorProfile.findUnique({
+    where: {
+      userId,
+    },
+  });
+
+  if(!tutor) {
+    throw new Error("Tutor profile not found");
+  }
+
+  const booking = await prisma.booking.findFirst({
+    where: {
+      id: bookingId,
+      tutorId: tutor?.id,
+    },
+  });
+  
+  if(!booking) {
+    throw new Error("Booking not found");
+  }
+
+  const updateBooking = await prisma.booking.update({
+    where:{
+      id: bookingId,
+    },
+    data: {
+      status,
+    },
+  });
+  return updateBooking;
 };
 
 export const DashboardService = {
   getStudentDashboard,
   getTutorDashboard,
+  updateTutorSessionStatus,
 };
