@@ -65,7 +65,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 export const getMe = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id;
-    console.log("This is from getme route", userId)
+    // console.log("This is from getme route", userId)
     if(!userId) {
       return res.status(400).json({success: false, message: "User Id not found in token."});
     }
@@ -111,7 +111,7 @@ export const updateUser = async (req: Request, res: Response) => {
       req.body
     );
 
-    console.log("THis is from user.controller.updateUser request", req)
+    // console.log("THis is from user.controller.updateUser request", req)
 
     res.status(200).json({
       success: true,

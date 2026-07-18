@@ -125,7 +125,7 @@ export const getAvailableSlots = async (tutorId: string, date: string) => {
     .toLocaleDateString("en-US", { weekday: "long" })
     .toUpperCase() as Day;
 
-    console.log("week day from slots service", weekDay)
+    // console.log("week day from slots service", weekDay)
 
   // find tutor
   const tutor = await prisma.tutorProfile.findUnique({
@@ -149,8 +149,8 @@ export const getAvailableSlots = async (tutorId: string, date: string) => {
     },
   });
 
-  console.log("availability from slot service", availability)
-  console.log("tutor id and date from slot service", tutorId, date)
+  // console.log("availability from slot service", availability)
+  // console.log("tutor id and date from slot service", tutorId, date)
 
   if (availability.length === 0) {
     return [];

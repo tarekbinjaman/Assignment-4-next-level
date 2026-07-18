@@ -35,6 +35,7 @@ export const getTutorDashboard = async (req: Request, res: Response) => {
 };
 
 export const updateTutorSessionStatus = async(req: Request, res: Response) => {
+  console.log("updateTutorSessionStatus called with params:", req.params, "and body:", req.body);
   try {
     const userId = (req as any).user.id;
     const result = await DashboardService.updateTutorSessionStatus(userId, req.params.id as string, req.body.status);
@@ -47,5 +48,6 @@ export const updateTutorSessionStatus = async(req: Request, res: Response) => {
       success: false,
       message: error.message,
     });
+    console.log("Error updating tutor session status:", error);
   }
 };
