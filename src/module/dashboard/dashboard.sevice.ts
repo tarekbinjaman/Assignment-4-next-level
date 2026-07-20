@@ -162,7 +162,7 @@ const getTutorDashboard = async (
   status?: BookingStatus,
   sort: "asc" | "desc" = "desc",
 ) => {
-  const today = new Date();
+  const today = new Date("2026-07-19");
   // =========================
   // Get Tutor Profile
   // =========================
@@ -260,7 +260,7 @@ const getTutorDashboard = async (
   // Next Session
   // =========================
 
-  const nextSession = await prisma.booking.findFirst({
+  const nextSession = await prisma.booking.findMany({
     where: {
       tutorId,
       status: BookingStatus.ACCEPTED,
@@ -268,11 +268,21 @@ const getTutorDashboard = async (
         gte: today,
       },
     },
-    orderBy: {
+    orderBy: [
+    {
       date: "asc",
     },
+    {
+      startTime: "asc",
+    },
+  ],
     include: {
       student: true,
+      tutor: {
+        include: {
+          categories: true,
+        },
+      },
     },
   });
 
@@ -335,21 +345,17 @@ const getTutorDashboard = async (
         1,
       ),
     },
-    nextSession: nextSession
-      ? {
-          id: nextSession.id,
-          studentName: nextSession.student.name,
-          studentImage: nextSession.student.image,
-          date: nextSession.date,
-          startTime: nextSession.startTime,
-          endTime: nextSession.endTime,
-          duration: calculateDuration(
-            nextSession.startTime,
-            nextSession.endTime,
-          ),
-          status: nextSession.status,
-        }
-      : null,
+    nextSession: nextSession.map((session) => ({
+      id: session.id,
+      studentName: session.student.name,
+      studentImage: session.student.image,
+      date: session.date,
+      startTime: session.startTime,
+      endTime: session.endTime,
+      category: session.tutor?.categories?.[0]?.name ?? "General",
+      duration: calculateDuration(session.startTime, session.endTime),
+      status: session.status,
+    })),
 
     recentReviews: recentReviews.map((review) => ({
       id: review.id,
@@ -405,7 +411,7 @@ const updateTutorSessionStatus = async (
     },
   });
 
-  if(!tutor) {
+  if (!tutor) {
     throw new Error("Tutor profile not found");
   }
 
@@ -415,13 +421,13 @@ const updateTutorSessionStatus = async (
       tutorId: tutor?.id,
     },
   });
-  
-  if(!booking) {
+
+  if (!booking) {
     throw new Error("Booking not found");
   }
 
   const updateBooking = await prisma.booking.update({
-    where:{
+    where: {
       id: bookingId,
     },
     data: {
