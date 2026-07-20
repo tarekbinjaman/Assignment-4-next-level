@@ -269,13 +269,13 @@ const getTutorDashboard = async (
       },
     },
     orderBy: [
-    {
-      date: "asc",
-    },
-    {
-      startTime: "asc",
-    },
-  ],
+      {
+        date: "asc",
+      },
+      {
+        startTime: "asc",
+      },
+    ],
     include: {
       student: true,
       tutor: {
@@ -437,8 +437,85 @@ const updateTutorSessionStatus = async (
   return updateBooking;
 };
 
+const getTutorSessionDetails = async (userId: string, bookingId: string) => {
+  const tutor = await prisma.tutorProfile.findUnique({
+    where: {
+      userId,
+    },
+  });
+
+  if (!tutor) {
+    throw new Error("Tutor profile not found");
+  }
+
+  const booking = await prisma.booking.findFirst({
+    where: {
+      id: bookingId,
+      tutorId: tutor.id,
+    },
+    include: {
+      student: true,
+      tutor: {
+        include: {
+          user: true,
+          categories: true,
+        },
+      },
+      review: true,
+    },
+  });
+
+  if (!booking) {
+    throw new Error("Booking not found");
+  }
+
+  return {
+    id: booking.id,
+
+    student: {
+      id: booking.student.id,
+      name: booking.student.name,
+      image: booking.student.image,
+      email: booking.student.email,
+    },
+
+    session: {
+      category:
+        booking.tutor.categories.length > 0
+          ? booking.tutor.categories[0].name
+          : "General",
+
+      date: booking.date,
+
+      startTime: booking.startTime,
+
+      endTime: booking.endTime,
+
+      duration: calculateDuration(booking.startTime, booking.endTime),
+
+      status: booking.status,
+    },
+
+    booking: {
+      totalPrice: Number(booking.totalPrice),
+
+      notes: booking.notes,
+
+      createdAt: booking.createdAt,
+    },
+
+    review: booking.review
+      ? {
+          rating: booking.review.rating,
+          comment: booking.review.comment,
+        }
+      : null,
+  };
+};
+
 export const DashboardService = {
   getStudentDashboard,
   getTutorDashboard,
   updateTutorSessionStatus,
+  getTutorSessionDetails,
 };
