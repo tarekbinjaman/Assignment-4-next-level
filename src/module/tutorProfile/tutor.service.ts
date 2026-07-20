@@ -45,12 +45,14 @@ export const getAllTutors = async ({
   category,
   sort,
   search,
-  availableDays
+  availableDays,
+  status,
 }: {
   category?: string;
   sort?: string;
   search?: string;
   availableDays?: Day[];
+  status?: string;
 }) => {
   return await prisma.tutorProfile.findMany({
     where: {
@@ -77,6 +79,9 @@ export const getAllTutors = async ({
             name: category,
           },
         },
+      }),
+      ...(status && {
+        status: status,
       }),
     },
 

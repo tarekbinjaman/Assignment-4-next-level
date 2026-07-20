@@ -21,7 +21,7 @@ export const createTutor = async (req: Request, res: Response) => {
 };
 
 export const getTutors = async (req: Request, res: Response) => {
-  const { category, sort, search, availableDays } = req.query;
+  const { category, sort, search, availableDays, status } = req.query;
   const result = await TutorService.getAllTutors({
     category: category as string,
     sort: sort as string,
@@ -29,6 +29,7 @@ export const getTutors = async (req: Request, res: Response) => {
     availableDays: availableDays
       ? ((availableDays as string).split(",") as Day[])
       : [],
+    status: status as string,
   });
   res.json({
     success: true,
