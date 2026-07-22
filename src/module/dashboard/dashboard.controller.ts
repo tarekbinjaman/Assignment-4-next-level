@@ -23,7 +23,10 @@ export const getTutorDashboard = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;
     const { search, status, sort } = req.query;
-    const result = await DashboardService.getTutorDashboard(userId, search as string, status as BookingStatus | undefined, sort as "asc" | "desc" | undefined);
+      //   const statuses = status
+      // ? (status as string).split(",") as BookingStatus[]
+      // : undefined;
+    const result = await DashboardService.getTutorDashboard(userId, search as string, status as string, sort as "asc" | "desc" | undefined);
     res.status(200).json({
       success: true,
       data: result,

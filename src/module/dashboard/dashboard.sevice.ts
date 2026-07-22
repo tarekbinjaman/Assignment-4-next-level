@@ -159,10 +159,10 @@ const getStudentDashboard = async (studentId: string) => {
 const getTutorDashboard = async (
   userId: string,
   search?: string,
-  status?: BookingStatus,
+  status?: string,
   sort: "asc" | "desc" = "desc",
 ) => {
-  const today = new Date("2026-07-19");
+  const today = new Date("2026-07-23");
   // =========================
   // Get Tutor Profile
   // =========================
@@ -182,11 +182,17 @@ const getTutorDashboard = async (
   // Sessions
   // =========================
 
+  const statusFilter = status
+    ? (status.split(",") as BookingStatus[])
+    : [];
+
   const sessions = await prisma.booking.findMany({
     where: {
       tutorId,
       ...(status && {
-        status,
+        status: {
+          in: statusFilter,
+        },
       }),
       ...(search && {
         student: {
