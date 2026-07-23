@@ -35,7 +35,9 @@ bookingDate.getHours()      // 10 (depends on timezone)
 
   if (!student) {
     throw new Error("Student not found");
+    
   }
+
 
   // check tutor exists
   const tutor = await prisma.tutorProfile.findUnique({

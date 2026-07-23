@@ -17,6 +17,7 @@ export const createBooking = async (req: Request, res: Response) => {
       success: false,
       message: error.message,
     });
+
   }
 };
 
